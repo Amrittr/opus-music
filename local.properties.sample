@@ -1,0 +1,17 @@
+# Copy this file to local.properties and fill in the values you need.
+# local.properties is ignored by Git and must never be committed.
+
+# Android SDK location (Android Studio fills this in automatically)
+# sdk.dir=/Users/you/Library/Android/sdk
+
+# Required for login: your Firebase project's settings.
+# Firebase console -> Project settings -> Your apps.
+FIREBASE_API_KEY=
+FIREBASE_PROJECT_ID=
+FIREBASE_APP_ID=
+FIREBASE_SENDER_ID=
+FIREBASE_STORAGE_BUCKET=
+
+# Optional: Last.fm scrobbling. Create an API account at https://www.last.fm/api/account/create
+LASTFM_API_KEY=
+LASTFM_SECRET=
