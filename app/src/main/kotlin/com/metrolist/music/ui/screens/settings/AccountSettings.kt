@@ -274,140 +274,143 @@ fun AccountSettings(
             )
         }
 
-        Material3SettingsGroup(
-            items = listOfNotNull(
-                Material3SettingsItem(
-                    title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (isLoggedIn && accountImageUrl != null) {
-                                AsyncImage(
-                                    model = accountImageUrl,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.size(40.dp).clip(CircleShape)
-                                )
-
-                                Spacer(Modifier.width(12.dp))
-                            }
-
-                            Text(
-                                text = if (isLoggedIn) accountName else stringResource(R.string.login),
-                            )
-                        }
-                    },
-                    icon = if (!isLoggedIn) painterResource(R.drawable.login) else null,
-                    trailingContent = {
-                        if (isLoggedIn) {
-                            OutlinedButton(
-                                onClick = {
-                                    Timber.d("[LOGOUT] User clicked logout button, showing dialog")
-                                    showLogoutDialog = true
-                                },
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Text(stringResource(R.string.action_logout))
-                            }
-                        }
-                    },
-                    onClick = {
-                        onClose()
-                        if (isLoggedIn) {
-                            navController.navigate("account")
-                        } else {
-                            navController.navigate("login")
-                        }
-                    }
-                ),
-                if (isLoggedIn) {
+        // Opus: no YouTube Music sign-in; this section only stays so an existing session can sign out
+        if (isLoggedIn) {
+            Material3SettingsGroup(
+                items = listOfNotNull(
                     Material3SettingsItem(
-                        title = { Text(stringResource(R.string.switch_youtube_channel)) },
-                        icon = painterResource(R.drawable.account),
+                        title = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (isLoggedIn && accountImageUrl != null) {
+                                    AsyncImage(
+                                        model = accountImageUrl,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.size(40.dp).clip(CircleShape)
+                                    )
+
+                                    Spacer(Modifier.width(12.dp))
+                                }
+
+                                Text(
+                                    text = if (isLoggedIn) accountName else stringResource(R.string.login),
+                                )
+                            }
+                        },
+                        icon = if (!isLoggedIn) painterResource(R.drawable.login) else null,
+                        trailingContent = {
+                            if (isLoggedIn) {
+                                OutlinedButton(
+                                    onClick = {
+                                        Timber.d("[LOGOUT] User clicked logout button, showing dialog")
+                                        showLogoutDialog = true
+                                    },
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    )
+                                ) {
+                                    Text(stringResource(R.string.action_logout))
+                                }
+                            }
+                        },
                         onClick = {
                             onClose()
-                            navController.navigate("switch_channel")
-                        },
-                    )
-                } else null,
-            ),
-            useLowContrast = true
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        Material3SettingsGroup(
-            items = listOf(
-                Material3SettingsItem(
-                    title = {
-                        Text(
-                            when {
-                                !isLoggedIn -> stringResource(R.string.advanced_login)
-                                showToken -> stringResource(R.string.token_shown)
-                                else -> stringResource(R.string.token_hidden)
+                            if (isLoggedIn) {
+                                navController.navigate("account")
+                            } else {
+                                navController.navigate("login")
                             }
-                        )
-                    },
-                    icon = painterResource(R.drawable.token),
-                    onClick = {
-                        if (!isLoggedIn) showTokenEditor = true
-                        else if (!showToken) showToken = true
-                        else showTokenEditor = true
-                    }
-                ),
-                Material3SettingsItem(
-                    title = { Text(stringResource(R.string.more_content)) },
-                    icon = painterResource(R.drawable.cached),
-                    trailingContent = {
-                        Switch(
-                            enabled = isLoggedIn,
-                            checked = useLoginForBrowse,
-                            onCheckedChange = {
-                                YouTube.useLoginForBrowse = it
-                                onUseLoginForBrowseChange(it)
+                        }
+                    ),
+                    if (isLoggedIn) {
+                        Material3SettingsItem(
+                            title = { Text(stringResource(R.string.switch_youtube_channel)) },
+                            icon = painterResource(R.drawable.account),
+                            onClick = {
+                                onClose()
+                                navController.navigate("switch_channel")
                             },
-                            thumbContent = {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (useLoginForBrowse) R.drawable.check else R.drawable.close
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                                )
-                            }
                         )
-                    },
-                    enabled = isLoggedIn
+                    } else null,
                 ),
-                Material3SettingsItem(
-                    title = { Text(stringResource(R.string.yt_sync)) },
-                    icon = painterResource(R.drawable.cached),
-                    trailingContent = {
-                        Switch(
-                            enabled = isLoggedIn,
-                            checked = ytmSync,
-                            onCheckedChange = onYtmSyncChange,
-                            thumbContent = {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (ytmSync) R.drawable.check else R.drawable.close
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                                )
-                            }
-                        )
-                    },
-                    enabled = isLoggedIn
-                )
-            ),
-            useLowContrast = true
-        )
+                useLowContrast = true
+            )
 
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
+
+            Material3SettingsGroup(
+                items = listOf(
+                    Material3SettingsItem(
+                        title = {
+                            Text(
+                                when {
+                                    !isLoggedIn -> stringResource(R.string.advanced_login)
+                                    showToken -> stringResource(R.string.token_shown)
+                                    else -> stringResource(R.string.token_hidden)
+                                }
+                            )
+                        },
+                        icon = painterResource(R.drawable.token),
+                        onClick = {
+                            if (!isLoggedIn) showTokenEditor = true
+                            else if (!showToken) showToken = true
+                            else showTokenEditor = true
+                        }
+                    ),
+                    Material3SettingsItem(
+                        title = { Text(stringResource(R.string.more_content)) },
+                        icon = painterResource(R.drawable.cached),
+                        trailingContent = {
+                            Switch(
+                                enabled = isLoggedIn,
+                                checked = useLoginForBrowse,
+                                onCheckedChange = {
+                                    YouTube.useLoginForBrowse = it
+                                    onUseLoginForBrowseChange(it)
+                                },
+                                thumbContent = {
+                                    Icon(
+                                        painter = painterResource(
+                                            id = if (useLoginForBrowse) R.drawable.check else R.drawable.close
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize)
+                                    )
+                                }
+                            )
+                        },
+                        enabled = isLoggedIn
+                    ),
+                    Material3SettingsItem(
+                        title = { Text(stringResource(R.string.yt_sync)) },
+                        icon = painterResource(R.drawable.cached),
+                        trailingContent = {
+                            Switch(
+                                enabled = isLoggedIn,
+                                checked = ytmSync,
+                                onCheckedChange = onYtmSyncChange,
+                                thumbContent = {
+                                    Icon(
+                                        painter = painterResource(
+                                            id = if (ytmSync) R.drawable.check else R.drawable.close
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize)
+                                    )
+                                }
+                            )
+                        },
+                        enabled = isLoggedIn
+                    )
+                ),
+                useLowContrast = true
+            )
+
+            Spacer(Modifier.height(12.dp))
+        }
 
         Material3SettingsGroup(
             items = buildList {

@@ -85,11 +85,11 @@ object OpusAuth {
     }
 
     suspend fun createAccount(name: String, email: String, password: String) = firebaseCall {
-        val user = auth.createUserWithEmailAndPassword(email.trim(), password).await().user
-            ?: throw OpusAuthException("Could not create the account. Please try again.")
-        // The login screen closes as soon as the account exists, cancelling its coroutine;
-        // finish setting up the profile anyway.
+        // The login screen closes as soon as the account exists, which can cancel the caller
+        // even before the create call returns; finish setting up the profile regardless.
         withContext(NonCancellable) {
+            val user = auth.createUserWithEmailAndPassword(email.trim(), password).await().user
+                ?: throw OpusAuthException("Could not create the account. Please try again.")
             user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(name.trim()).build()).await()
             // A failed verification email should not block a new account from signing in.
             runCatching { user.sendEmailVerification().await() }
